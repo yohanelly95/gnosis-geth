@@ -182,9 +182,9 @@ func hashAlloc(ga *types.GenesisAlloc, isVerkle bool) (common.Hash, error) {
 			statedb.AddBalance(addr, uint256.MustFromBig(account.Balance), tracing.BalanceIncreaseGenesisBalance)
 		}
 		if len(account.Constructor) != 0 {
-			// hardcode chiado since this is the only use case we have for the time being.
+			// hardcode metalayer since this is the only use case we have for the time being.
 			// things could be cleaner, but it would increase the diff with geth.
-			code, err := SysCreate(addr, account.Constructor, params.ChiadoChainConfig, statedb, &types.Header{Difficulty: big.NewInt(131072), Number: big.NewInt(0)})
+			code, err := SysCreate(addr, account.Constructor, params.MetalayerChainConfig, statedb, &types.Header{Difficulty: big.NewInt(131072), Number: big.NewInt(0)})
 			if err != nil {
 				panic(err)
 			}
@@ -231,7 +231,7 @@ func flushAlloc(ga *types.GenesisAlloc, triedb *triedb.Database) (common.Hash, e
 		if len(account.Constructor) != 0 {
 			// hardcode chiado since this is the only use case we have for the time being.
 			// things could be cleaner, but it would increase the diff with geth.
-			code, err := SysCreate(addr, account.Constructor, params.ChiadoChainConfig, statedb, &types.Header{Difficulty: big.NewInt(131072), Number: big.NewInt(0)})
+			code, err := SysCreate(addr, account.Constructor, params.MetalayerChainConfig, statedb, &types.Header{Difficulty: big.NewInt(131072), Number: big.NewInt(0)})
 			if err != nil {
 				panic(err)
 			}
@@ -497,6 +497,8 @@ func (g *Genesis) chainConfigOrDefault(ghash common.Hash, stored *params.ChainCo
 		return params.GnosisChainConfig
 	case ghash == params.ChiadoGenesisHash:
 		return params.ChiadoChainConfig
+	case ghash == params.MetalayerGenesisHash:
+		return params.MetalayerChainConfig
 	default:
 		return stored
 	}
@@ -725,6 +727,17 @@ func DefaultChiadoGenesisBlock() *Genesis {
 		GasLimit:   0x989680,
 		Difficulty: big.NewInt(0x20000),
 		Alloc:      readPrealloc("allocs/chiado.json"),
+	}
+}
+
+func DefaultMetalayerGenesisBlock() *Genesis {
+	return &Genesis{
+		Config:     params.MetalayerChainConfig,
+		Timestamp:  0,
+		AuRaSeal:   common.FromHex("0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
+		GasLimit:   0x989680,
+		Difficulty: big.NewInt(0x20000),
+		Alloc:      readPrealloc("allocs/metalayer.json"),
 	}
 }
 

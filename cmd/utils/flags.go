@@ -163,6 +163,11 @@ var (
 		Usage:    "Chiado network: pre-configured merged proof-of-authority test network",
 		Category: flags.EthCategory,
 	}
+	MetaChainFlag = &cli.BoolFlag{
+		Name:     "metalayer",
+		Usage:    "Metalayer chain network: pre-configured merged proof-of-authority network",
+		Category: flags.EthCategory,
+	}
 	// Dev mode
 	DeveloperFlag = &cli.BoolFlag{
 		Name:     "dev",
@@ -947,6 +952,7 @@ var (
 		HoleskyFlag,
 		GnosisChainFlag,
 		ChiadoFlag,
+		MetaChainFlag,
 	}
 	// NetworkFlags is the flag group of all built-in supported networks.
 	NetworkFlags = append([]cli.Flag{MainnetFlag}, TestnetFlags...)
@@ -978,6 +984,9 @@ func MakeDataDir(ctx *cli.Context) string {
 		}
 		if ctx.Bool(ChiadoFlag.Name) {
 			return filepath.Join(path, "chiado")
+		}
+		if ctx.Bool(MetaChainFlag.Name) {
+			return filepath.Join(path, "metalayer")
 		}
 		return path
 	}
@@ -1043,6 +1052,8 @@ func setBootstrapNodes(ctx *cli.Context, cfg *p2p.Config) {
 			urls = params.GnosisBootnodes
 		case ctx.Bool(ChiadoFlag.Name):
 			urls = params.ChiadoBootnodes
+		case ctx.Bool(MetaChainFlag.Name):
+			urls = params.MetalayerBootnodes
 		}
 	}
 	cfg.BootstrapNodes = mustParseBootnodes(urls)
@@ -1431,6 +1442,8 @@ func SetDataDir(ctx *cli.Context, cfg *node.Config) {
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "gnosis")
 	case ctx.Bool(ChiadoFlag.Name) && cfg.DataDir == node.DefaultDataDir():
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "chiado")
+	case ctx.Bool(MetaChainFlag.Name) && cfg.DataDir == node.DefaultDataDir():
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "metalayer")
 	}
 }
 
@@ -1598,7 +1611,7 @@ func CheckExclusive(ctx *cli.Context, args ...interface{}) {
 // SetEthConfig applies eth-related command line flags to the config.
 func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *ethconfig.Config) {
 	// Avoid conflicting network flags
-	CheckExclusive(ctx, MainnetFlag, DeveloperFlag, SepoliaFlag, HoleskyFlag, ChiadoFlag, GnosisChainFlag)
+	CheckExclusive(ctx, MainnetFlag, DeveloperFlag, SepoliaFlag, HoleskyFlag, ChiadoFlag, GnosisChainFlag, MetaChainFlag)
 	CheckExclusive(ctx, DeveloperFlag, ExternalSignerFlag) // Can't use both ephemeral unlocked and external signer
 
 	// Set configurations from CLI flags
@@ -1776,6 +1789,12 @@ func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *ethconfig.Config) {
 		}
 		cfg.Genesis = core.DefaultChiadoGenesisBlock()
 		SetDNSDiscoveryDefaults(cfg, params.ChiadoGenesisHash)
+	case ctx.Bool(MetaChainFlag.Name):
+		if !ctx.IsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = 426153627
+		}
+		cfg.Genesis = core.DefaultMetalayerGenesisBlock()
+		SetDNSDiscoveryDefaults(cfg, params.MetalayerGenesisHash)
 	case ctx.Bool(DeveloperFlag.Name):
 		if !ctx.IsSet(NetworkIdFlag.Name) {
 			cfg.NetworkId = 1337
@@ -2157,6 +2176,8 @@ func MakeGenesis(ctx *cli.Context) *core.Genesis {
 		genesis = core.DefaultGnosisGenesisBlock()
 	case ctx.Bool(ChiadoFlag.Name):
 		genesis = core.DefaultChiadoGenesisBlock()
+	case ctx.Bool(MetaChainFlag.Name):
+		genesis = core.DefaultMetalayerGenesisBlock()
 	case ctx.Bool(DeveloperFlag.Name):
 		Fatalf("Developer chains are ephemeral")
 	}
