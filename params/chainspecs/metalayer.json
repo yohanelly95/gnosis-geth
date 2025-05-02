@@ -13,7 +13,7 @@
     "berlinBlock": 0,
     "londonBlock": 0,
     "shanghaiTime": 0,
-    "cancunTime": 0,
+    "cancunTime": 1746520200,
     "terminalTotalDifficulty": 8626000000000000000000058750000000000000000000,
     "terminalTotalDifficultyPassed": true,
     "aura": {
@@ -37,14 +37,14 @@
         }
       },
       "blockRewardContractAddress": "0x867305d19606aadba405ce534e303d0e225f9556",
-      "blockRewardContractTransition": 1310,
+      "blockRewardContractTransition": 0,
       "blockRewardContractTransitions": {
         "9186425": "0x481c034c6d9441db23ea48de68bcae812c5d39ba"
       },
       "randomnessContractAddress": {
         "9186425": "0x5870b0527DeDB1cFBD9534343Feda1a41Ce47766"
       },
-      "posdaoTransition": 1000,
+      "posdaoTransition": 0,
       "registrar": "0x6B53721D4f2Fb9514B85f5C49b197D857e36Cf03",
       "rewriteBytecode": {
         "21735000": {
