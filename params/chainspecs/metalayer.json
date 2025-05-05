@@ -14,7 +14,7 @@
     "londonBlock": 0,
     "shanghaiTime": 0,
     "cancunTime": 0,
-    "terminalTotalDifficulty": 8626000000000000000000058750000000000000000000,
+    "terminalTotalDifficulty": 0,
     "terminalTotalDifficultyPassed": true,
     "aura": {
       "stepDuration": 5,
